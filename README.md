@@ -1,6 +1,6 @@
 # flutterdemoapp
 
-A new Flutter application.
+Flutter 个人学习 Demo App
 
 ## Getting Started
 
