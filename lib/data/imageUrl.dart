@@ -1,4 +1,4 @@
-var data = {
+var imageUrlData = {
   "可爱design": [
     "https://img.ui.cn/data/file/4/2/3/3284324.png?imageMogr2/auto-orient/format/jpg/strip/thumbnail/!900%3E/quality/90/",
 

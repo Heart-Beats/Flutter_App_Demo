@@ -1,222 +1,137 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
-
-import 'res/data.dart';
+import 'package:flutterdemoapp/UI/pages/DynamicPage.dart';
+import 'package:flutterdemoapp/UI/pages/HomePage.dart';
+import 'package:flutterdemoapp/UI/pages/MinePage.dart';
+import 'package:flutterdemoapp/UI/pages/OtherPage.dart';
 
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  final myPageView = MyPageView();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        brightness: Brightness.dark,
-        primaryColor: Colors.teal,
-        accentColor: Colors.cyan,
-      ),
+        title: 'Flutter Demo',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          brightness: Brightness.dark,
+          primaryColor: Colors.teal,
+          accentColor: Colors.cyan,
+        ),
 //      darkTheme: ThemeData.dark(),
 //      themeMode: ThemeMode.dark,
-      home: Scaffold(
-          appBar: AppBar(
-            title: Text("Flutter测试应用"),
-            centerTitle: true,
-            backgroundColor: Colors.deepPurpleAccent,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5))),
-          ),
-          body: HomeContent()),
-    );
+        home: Scaffold(
+          body: myPageView,
+          bottomNavigationBar: MyBottomNavigationBar(pageView: myPageView),
+        ));
   }
 }
 
-class HomeContent extends StatelessWidget {
+class MyPageView extends StatefulWidget {
+  final _myPageViewState = _MyPageViewState();
+
+  @override
+  _MyPageViewState createState() => _myPageViewState;
+
+  PageController getPageViewController() => _myPageViewState._controller;
+
+  setPageViewOnPageChanged(ValueChanged<int> onPageChanged) {
+    _myPageViewState._onPageChanged = onPageChanged;
+  }
+}
+
+class _MyPageViewState extends State<MyPageView> {
+  var pages = [HomePage(), DynamicPage(), OtherPage(), MinePage()];
+
+  PageController _controller;
+  var _onPageChanged;
+
+  @override
+  void dispose() {
+    _controller = null;
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    //viewportFraction 控制视图显示比例，可产生画廊效果
+    _controller = PageController(viewportFraction: 1);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: [
-        Container(
-          height: 350,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(30),
-              image: DecorationImage(
-                  image: NetworkImage(
-                      "https://imgpub.chuangkit.com/designTemplate/2020/03/16/532744779_thumb?v=1584325800000"),
-                  fit: BoxFit.cover,
-                  scale: 1)),
-          child: MyListView(),
-        ),
-        Container(
-          height: 450,
-          child: MyGridView(),
-        )
-      ],
+    return PageView(
+      children: pages,
+      controller: _controller,
+      onPageChanged: _onPageChanged,
     );
   }
 }
 
-// ignore: must_be_immutable
-class MyListView extends StatelessWidget {
-  List<Widget> _listTitles = [];
+class MyBottomNavigationBar extends StatefulWidget {
+  var myBottomNavigationBarState;
 
-  MyListView({
-    Key key,
-  }) {
-    _listTitles = getListData();
+  MyBottomNavigationBar({MyPageView pageView}) {
+    myBottomNavigationBarState = _MyBottomNavigationBarState(pageView: pageView);
   }
 
-  List<Widget> getListData() {
-    var tempList = <Widget>[];
-    for (int i = 0; i < 10; i++) {
-      if (i == 0) {
-        tempList.add(CustomColumn());
-      }
-      tempList.add(Container(
-        //ListTile 默认宽度是无限制的，所以在横向列表时需要限制它的宽度，不然布局就会出错
-        width: 100,
-        child: ListTile(
-          leading: ClipOval(
-            child: Image(
-              image: NetworkImage(data["可爱design"][0]),
-              fit: BoxFit.cover,
-              width: 50,
-              height: 50,
-            ),
-          ),
-          title: Text('标题$i'),
-          subtitle: Text("内容概览$i"),
-          focusColor: Colors.pink,
-          selected: true,
-          autofocus: true,
-        ),
-      ));
+  @override
+  _MyBottomNavigationBarState createState() => myBottomNavigationBarState;
+}
+
+class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
+  final iconMap = {
+    "首页": {"icon": Icons.home, "color": Colors.pink},
+    "动态": {"icon": Icons.toys, "color": Colors.deepPurple},
+    "其他": {"icon": Icons.audiotrack, "color": Colors.indigo},
+    "我的": {"icon": Icons.child_care, "color": Colors.brown}
+  };
+  var selectItemPosition = 0;
+
+  MyPageView myPageView;
+
+  _MyBottomNavigationBarState({MyPageView pageView}) {
+    if (pageView != null) {
+      this.myPageView = pageView;
     }
-    return tempList;
   }
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemBuilder: (context, index) => _listTitles[index],
-        separatorBuilder: (context, index) {
-          return Divider(
-            height: 2,
-            thickness: 1,
-            indent: 80,
-            color: Colors.deepOrange,
-          );
-        },
-        itemCount: _listTitles.length);
-  }
-}
-
-class CustomColumn extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        MyContainer(),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text("本地图片"),
-            Image(
-              image: AssetImage('images/Avatar_2.jpg'),
-              fit: BoxFit.cover,
-              width: 100,
-              height: 100,
-            )
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text("网络图片"),
-            Image(
-              image: NetworkImage(
-                  "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=2782555045,2953409065&fm=26&gp=0.jpg"),
-              fit: BoxFit.cover,
-              width: 100,
-              height: 100,
-            )
-          ],
-        )
-      ],
-    );
-  }
-}
-
-class MyContainer extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 100,
-      height: 100,
-      alignment: Alignment.center,
-      margin: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
-//      color: Colors.lightBlueAccent,
-      decoration: ShapeDecoration(
-          gradient:
-              LinearGradient(colors: [Colors.lightBlue, Colors.deepPurpleAccent], transform: GradientRotation(10)),
-          shape: Border(
-              left: BorderSide(color: Colors.black, width: 2),
-              top: BorderSide(color: Colors.deepOrange, width: 2),
-              bottom: BorderSide(color: Colors.green, width: 2),
-              right: BorderSide(color: Colors.pink, width: 2))),
-      child: GestureDetector(
-        child: Text("Hello World"),
-      ),
-      transform: Matrix4.rotationX(math.pi / 6),
-    );
-  }
-}
-
-class MyGridView extends StatelessWidget {
-  var _gridData = <Widget>[];
-
-  MyGridView() {
-    _gridData = _getGridData();
-  }
-
-  List<Widget> _getGridData() {
-    var tempList = <Widget>[];
-    data["唯美插画"].forEach((element) {
-      tempList.add(Container(
-          child: Column(
-        children: [
-          Image.network(
-            element,
-            fit: BoxFit.cover,
-            height: 150,
-            width: 300,
-          ),
-          Text(
-            "唯美插画${data["唯美插画"].indexOf(element)}",
-            style: TextStyle(
-                color: Colors.deepOrange,
-                fontSize: 20,
-                decorationColor: Colors.cyan,
-                decoration: TextDecoration.underline,
-                decorationStyle: TextDecorationStyle.wavy),
-          )
-        ],
-      )));
+    this.myPageView?.setPageViewOnPageChanged((selectIndex) {
+      setState(() {
+        selectItemPosition = selectIndex;
+      });
     });
-    return tempList;
-  }
 
-  @override
-  Widget build(BuildContext context) {
-    return GridView.builder(
-      scrollDirection: Axis.horizontal,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, mainAxisSpacing: 5, crossAxisSpacing: 5, childAspectRatio: 1.618),
-      itemBuilder: (context, index) => _gridData[index],
-      itemCount: _gridData.length,
+    return BottomNavigationBar(
+      type: BottomNavigationBarType.shifting,
+      elevation: 20,
+      currentIndex: selectItemPosition,
+      fixedColor: Theme.of(context).accentColor,
+      backgroundColor: Colors.white,
+      showUnselectedLabels: true,
+      selectedLabelStyle: TextStyle(fontStyle: FontStyle.italic),
+      selectedIconTheme: IconThemeData(size: 35),
+      items:
+          //此中写法更好：需要的存储数据的空间更小，组件list会更占内存
+          iconMap.keys
+              .map((title) => BottomNavigationBarItem(
+                  title: Text(title), icon: Icon(iconMap[title]["icon"]), backgroundColor: iconMap[title]["color"]))
+              .toList(),
+      onTap: (index) {
+        setState(() {
+          selectItemPosition = index;
+          this
+              .myPageView
+              ?.getPageViewController()
+              ?.animateToPage(index, duration: Duration(seconds: 1), curve: Curves.easeInOut);
+        });
+      },
     );
   }
 }
