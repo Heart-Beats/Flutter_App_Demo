@@ -6,14 +6,8 @@ import 'package:flutterdemoapp/data/imageUrl.dart';
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text("首页"),
-          centerTitle: true,
-          backgroundColor: Colors.deepPurpleAccent,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5))),
-        ),
-        body: HomeContent(),
+    return Container(
+      child: HomeContent(),
     );
   }
 }

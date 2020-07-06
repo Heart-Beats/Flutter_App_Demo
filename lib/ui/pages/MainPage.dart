@@ -23,7 +23,7 @@ class _MainPageState extends State<MainPage> {
     int position = pageView.getPageViewController()?.page?.toInt();
     return Scaffold(
       appBar: AppBar(
-        title: Text("首页"),
+        title: Text(titles[position]),
         centerTitle: true,
         backgroundColor: Colors.deepPurpleAccent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5))),

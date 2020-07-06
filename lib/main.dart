@@ -19,25 +19,7 @@ class MyApp extends StatelessWidget {
 //      darkTheme: ThemeData.dark(),
 //      themeMode: ThemeMode.dark,
       initialRoute: "/",
-      onGenerateRoute: (RouteSettings routeSettings) {
-        PageContentBuilder pageContentBuilder = routes[routeSettings.name];
-
-        print("11111111111111111111111111111---${routeSettings.arguments}");
-        if (pageContentBuilder != null) {
-          final arguments = routeSettings.arguments;
-          Route route;
-          if (arguments != null) {
-            print("不为空");
-            route = MaterialPageRoute(builder: pageContentBuilder(context, arguments: arguments));
-          } else {
-            print("为空");
-            route = MaterialPageRoute(builder: pageContentBuilder(context));
-          }
-          print("222222222222222222$route");
-          return route;
-        }
-        return null;
-      },
+      onGenerateRoute: onGenerateRoute,
     );
   }
 }
