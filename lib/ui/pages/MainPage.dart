@@ -17,13 +17,13 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   final pageView = MyPageView();
   final titles = ["首页", "动态", "其他", "我的"];
+  int _position = 0;
 
   @override
   Widget build(BuildContext context) {
-    int position = pageView.getPageViewController()?.page?.toInt();
-    return Scaffold(
+    final scaffold = Scaffold(
       appBar: AppBar(
-        title: Text(titles[position]),
+        title: Text(titles.elementAt(_position ??= 0)),
         centerTitle: true,
         backgroundColor: Colors.deepPurpleAccent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5))),
@@ -31,6 +31,9 @@ class _MainPageState extends State<MainPage> {
       body: pageView,
       bottomNavigationBar: MyBottomNavigationBar(pageView: pageView),
     );
+    _position = pageView.getPageViewController()?.page?.toInt();
+    print("当前位置==$_position");
+    return scaffold;
   }
 }
 
