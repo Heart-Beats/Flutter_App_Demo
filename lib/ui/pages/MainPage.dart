@@ -21,9 +21,17 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    final scaffold = Scaffold(
+
+    pageView.setPageViewOnPageChanged((selectIndex) {
+      print("PageView2页面切换，选择的index==$selectIndex");
+      setState(() {
+        _position = selectIndex;
+      });
+    });
+
+    return Scaffold(
       appBar: AppBar(
-        title: Text(titles.elementAt(_position ??= 0)),
+        title: Text(titles.elementAt(_position < titles.length ? _position : 0)),
         centerTitle: true,
         backgroundColor: Colors.deepPurpleAccent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5))),
@@ -31,9 +39,6 @@ class _MainPageState extends State<MainPage> {
       body: pageView,
       bottomNavigationBar: MyBottomNavigationBar(pageView: pageView),
     );
-    _position = pageView.getPageViewController()?.page?.toInt();
-    print("当前位置==$_position");
-    return scaffold;
   }
 }
 
@@ -54,7 +59,7 @@ class _MyPageViewState extends State<MyPageView> {
   var pages = [HomePage(), DynamicPage(), OtherPage(), MinePage()];
 
   PageController _controller;
-  var _onPageChanged;
+  ValueChanged<int> _onPageChanged;
 
   @override
   void dispose() {
@@ -107,12 +112,6 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
 
   @override
   Widget build(BuildContext context) {
-    this.myPageView.setPageViewOnPageChanged((selectIndex) {
-      setState(() {
-        selectItemPosition = selectIndex;
-      });
-    });
-
     return BottomNavigationBar(
       type: BottomNavigationBarType.shifting,
       elevation: 20,
@@ -134,6 +133,7 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
           this
               .myPageView
               .getPageViewController()
+              // 此方法会引起 PageView 的 setPageViewOnPageChanged 方法回调执行
               .animateToPage(index, duration: Duration(seconds: 1), curve: Curves.easeInOut);
         });
       },
