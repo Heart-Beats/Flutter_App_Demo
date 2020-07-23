@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'DynamicPage.dart';
-import 'HomePage.dart';
-import 'MinePage.dart';
-import 'OtherPage.dart';
+import 'main/DynamicPage.dart';
+import 'main/HomePage.dart';
+import 'main/MinePage.dart';
+import 'main/OtherPage.dart';
 
 class MainPage extends StatefulWidget {
   final arguments;
@@ -23,7 +23,6 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
 
     pageView.setPageViewOnPageChanged((selectIndex) {
-      print("PageView2页面切换，选择的index==$selectIndex");
       setState(() {
         _position = selectIndex;
       });
